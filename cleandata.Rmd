@@ -1,0 +1,246 @@
+---
+title: "cleandata"
+author: "Carlos Crespín"
+date: "2024-03-21"
+output: html_document
+toc: TRUE
+  toc_float: 
+  level: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# 1. Limpieza de data SIUP 2020.
+
+Esta base de datos contiene información del Sistema Integrado de Unidades Policiales.
+En el año 2020, hubo un cuestionario con diversos apartados de la bases de datos.
+
+
+```{r}
+library(rio)
+denuncias=import("SIDPOL_2018-2024.xlsx")
+```
+```{r}
+library(dplyr)
+library(magrittr)
+```
+## 1.1. Limpieza de data a nivel provincial
+
+```{r}
+patrimoniales=select(denuncias, c(1, 3:8))
+names(patrimoniales)=c("year","departamento","provincias","distritos","ubigeo","tipos","denuncias")
+patrimoniales=filter(patrimoniales, tipos=="Delitos patrimoniales")
+patrimoniales=select(patrimoniales, c(1:5, 7))
+```
+
+
+La primera data a elaborar es la del número de denuncias por provincias en el 
+total de años
+
+```{r}
+Provincias_Totales=patrimoniales %>%
+  group_by(provincias) %>%
+  summarise(total_denuncias = sum(denuncias))
+Provincias_Totales=Provincias_Totales[-c(174),]#filtraremos el que no es provincia
+row.names(Provincias_Totales)=NULL
+head(Provincias_Totales)
+```
+
+
+Ahora realizaré la data por provincias del 2018
+```{r}
+Provincias_2018=filter(patrimoniales, year==2018)
+Provincias_2018=Provincias_2018%>%
+  group_by(provincias) %>%
+  summarise(denuncias2018=sum(denuncias))
+Provincias_2018=Provincias_2018[-c(166),]
+row.names(Provincias_2018)=NULL
+head(Provincias_2018)
+```
+
+
+Se realizará lo mismo para 2019
+```{r}
+Provincias_2019=filter(patrimoniales, year==2019)
+Provincias_2019=Provincias_2019%>%
+  group_by(provincias) %>%
+  summarise(denuncias2019=sum(denuncias))
+head(Provincias_2019)
+```
+
+Ahora toca 2020
+
+```{r}
+Provincias_2020=filter(patrimoniales, year==2020)
+Provincias_2020=Provincias_2020%>%
+  group_by(provincias) %>%
+  summarise(denuncias2020=sum(denuncias))
+head(Provincias_2020)
+```
+
+
+Toca el 2021
+```{r}
+Provincias_2021=filter(patrimoniales, year==2021)
+Provincias_2021=Provincias_2021%>%
+  group_by(provincias) %>%
+  summarise(denuncias2021=sum(denuncias))
+head(Provincias_2021)
+```
+
+2022
+```{r}
+Provincias_2022=filter(patrimoniales, year==2022)
+Provincias_2022=Provincias_2022%>%
+  group_by(provincias) %>%
+  summarise(denuncias2022=sum(denuncias))
+head(Provincias_2022)
+```
+
+2023
+
+```{r}
+Provincias_2023=filter(patrimoniales, year==2023)
+Provincias_2023=Provincias_2023%>%
+  group_by(provincias) %>%
+  summarise(denuncias2023=sum(denuncias))
+head(Provincias_2023)
+```
+
+2024
+```{r}
+Provincias_2024=filter(patrimoniales, year==2024)
+Provincias_2024=Provincias_2024%>%
+  group_by(provincias) %>%
+  summarise(denuncias2024=sum(denuncias))
+head(Provincias_2024)
+```
+
+Ahora haré un panel de las provincias
+```{r}
+panel_provincias <- patrimoniales %>%
+  group_by(provincias, year) %>%
+  summarise(total_denuncias = sum(denuncias))
+panel_provincias=panel_provincias[-c(1196),]
+row.names(panel_provincias)=NULL
+head(panel_provincias)
+```
+
+Ahora exportaré todos las bases que creé
+```{r}
+export(patrimoniales, "patrimoniales.csv")
+export(panel_provincias,"panel_provincias.csv")
+export(Provincias_2018,"provincias_2018.csv")
+export(Provincias_2019,"provincias_2019.csv")
+export(Provincias_2020,"provincias_2020.csv")
+export(Provincias_2021,"provincias_2021.csv")
+export(Provincias_2022,"provincias_2022.csv")
+export(Provincias_2023,"provincias_2023.csv")
+export(Provincias_2024,"provincias_2024.csv")
+export(Provincias_Totales,"provincias_totales.csv")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

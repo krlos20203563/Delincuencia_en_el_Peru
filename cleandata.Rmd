@@ -143,20 +143,107 @@ export(Provincias_2024,"provincias_2024.csv")
 export(Provincias_Totales,"provincias_totales.csv")
 ```
 
+## 1.2 Limpieza de datos otorgados por SIDPOL para la extorsión a nivel por departamentos
+```{r}
+library(rio)
+library(dplyr)
+library(magrittr)
+den_dpt=import("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/SIDPOL/SIDPOL_dpt_extorsion.xlsx")
+```
+
+Primero exploremos la información que contienen los datos en el tipo de delitos
+denunciados
+```{r}
+table(den_dpt$PMODALIDADES)
+```
+
+La primera data a realizar es el total de denuncias por DEPARTAMENTO entre los
+años 2018-2014 en materias de extorsión
+```{r}
+ext_total=filter(den_dpt, PMODALIDADES=="Extorsión")
+ext_total=ext_total%>%
+  group_by(DPTO_HECHO_NEW)%>%
+  summarise(total_denuncias = sum(n_dist_ID_DGC))
+ext_total
+```
 
 
+Ahora bien, procederemos a filtrar la información según cada año
+```{r}
+ext_2018=filter(den_dpt, ANIO==2018, PMODALIDADES == "Extorsión")
+ext_2018=ext_2018%>%
+  group_by(DPTO_HECHO_NEW) %>%
+  summarise(extor2018=sum(n_dist_ID_DGC))
+head(ext_2018)
+```
 
+2019
+```{r}
+ext_2019=filter(den_dpt, ANIO==2019, PMODALIDADES == "Extorsión")
+ext_2019=ext_2019%>%
+  group_by(DPTO_HECHO_NEW) %>%
+  summarise(extor2019=sum(n_dist_ID_DGC))
+head(ext_2019)
+```
 
+Ahora con el 2020
+```{r}
+ext_2020=filter(den_dpt, ANIO==2020, PMODALIDADES == "Extorsión")
+ext_2020=ext_2020%>%
+  group_by(DPTO_HECHO_NEW) %>%
+  summarise(extor2020=sum(n_dist_ID_DGC))
+head(ext_2020)
+```
 
+2021
+```{r}
+ext_2021=filter(den_dpt, ANIO==2021, PMODALIDADES == "Extorsión")
+ext_2021=ext_2021%>%
+  group_by(DPTO_HECHO_NEW) %>%
+  summarise(extor2021=sum(n_dist_ID_DGC))
+head(ext_2021)
+```
 
+2022
 
+```{r}
+ext_2022=filter(den_dpt, ANIO==2022, PMODALIDADES == "Extorsión")
+ext_2022=ext_2022%>%
+  group_by(DPTO_HECHO_NEW) %>%
+  summarise(extor2022=sum(n_dist_ID_DGC))
+head(ext_2022)
+```
 
+2023
+```{r}
+ext_2023=filter(den_dpt, ANIO==2023, PMODALIDADES == "Extorsión")
+ext_2023=ext_2023%>%
+  group_by(DPTO_HECHO_NEW) %>%
+  summarise(extor2023=sum(n_dist_ID_DGC))
+head(ext_2023)
+```
 
+Por último, realizaré un panel a nivel departamental
+```{r}
+panel_dpt_extor=filter(den_dpt, PMODALIDADES=="Extorsión")
+panel_dpt_extor <- panel_dpt_extor %>%
+  group_by(DPTO_HECHO_NEW, ANIO) %>%
+  summarise(total_extorsion = sum(n_dist_ID_DGC))
+head(panel_dpt_extor)
+```
 
+Ahora exportemos la data
 
-
-
-
+```{r}
+export(ext_2018,"ext_2018.csv")
+export(ext_2019,"ext_2019.csv")
+export(ext_2020,"ext_2020.csv")
+export(ext_2021,"ext_2021.csv")
+export(ext_2022,"ext_2022.csv")
+export(ext_2023,"ext_2023.csv")
+export(ext_total,"ext_total.csv")
+export(panel_dpt_extor,"panel_dpt_extor.csv")
+```
 
 
 

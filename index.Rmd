@@ -309,10 +309,33 @@ En este mapa se puede pareciar que Trujillo es el departamento con mayor número
 de denuncias por extorsión en los últimos años.
 
 
+# Variación de las denuncias por delitos por extorsión por año
+
+```{r}
+den_mod=import("https://github.com/krlos20203563/Delincuencia_en_el_Peru/raw/main/SIDPOL/SIDPOL_dpt_extorsion.xlsx")
+ext_years=filter(den_mod, PMODALIDADES=="Extorsión")
+ext_years=ext_years%>%
+  group_by(ANIO)%>%
+  summarise(n_extor=sum(n_dist_ID_DGC))
+names(ext_years)=c("years","n_extor")
+ext_years$years=as.numeric(ext_years$years)
+```
 
 
 
+Ahora se verificará cómo ha variado por año el número de denuncias por delitos
+de extorsión
+```{r}
+ggplot(ext_years, aes(x = years, y = n_extor)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Denuncias por extorsión del 2018-2024",
+       x = "Año",
+       y = "Total de casos") +
+  theme_minimal()
 
+
+```
 
 
 

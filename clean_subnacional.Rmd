@@ -1,0 +1,136 @@
+---
+title: "Untitled"
+author: "Carlos Crespín"
+date: "2024-06-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rio)
+library(dplyr)
+library(magrittr)
+```
+
+```{r}
+autoridades_2014=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/JNE/MUNICIPAL DISTRITAL 2014/ERM2014_Autoridades_Distrital.xlsx")
+padron_2014=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/JNE/MUNICIPAL DISTRITAL 2014/ERM2014_Padron_Distrital.xlsx")
+autoridades_2018=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/JNE/MUNICIPAL DISTRITAL 2018/ERM2018_Autoridades_Distrital.xlsx")
+padron_2018=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/JNE/MUNICIPAL DISTRITAL 2018/ERM2018_Padron_Distrital.xlsx")
+autoridades_2022=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/JNE/MUNICIPAL DISTRITAL 2022/ERM2022_Autoridades_Distrital.xlsx")
+padron_2022=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/JNE/MUNICIPAL DISTRITAL 2022/ERM2022_Padron_Distrital.xlsx")
+```
+
+```{r}
+autoridades_2014_pre=select(autoridades_2014, c(1:4,8,9))
+names(autoridades_2014_pre)=c("region","provincia","distrito","cargo","org_pol","tipo_org_pol")
+autoridades_2014_pre=filter(autoridades_2014_pre, cargo=='ALCALDE DISTRITAL')
+```
+
+```{r}
+autoridades_2018_pre=select(autoridades_2018,c(1:4,8,9))
+names(autoridades_2018_pre)=c("region","provincia","distrito","cargo","org_pol","tipo_org_pol")
+autoridades_2018_pre=filter(autoridades_2018_pre, cargo=='ALCALDE DISTRITAL')
+```
+
+```{r}
+autoridades_2022_pre=select(autoridades_2022,c(1:4,8,9))
+names(autoridades_2022_pre)=c("region","provincia","distrito","cargo","org_pol","tipo_org_pol")
+autoridades_2022_pre=filter(autoridades_2022_pre, cargo=='ALCALDE DISTRITAL')
+```
+
+```{r}
+autoridades_2014_pre$ubicacion_completa <- paste(autoridades_2014_pre$region, autoridades_2014_pre$provincia, autoridades_2014_pre$distrito, sep = "-")
+autoridades_2018_pre$ubicacion_completa <- paste(autoridades_2018_pre$region, autoridades_2018_pre$provincia, autoridades_2018_pre$distrito, sep = "-")
+autoridades_2022_pre$ubicacion_completa <- paste(autoridades_2022_pre$region, autoridades_2022_pre$provincia, autoridades_2022_pre$distrito, sep = "-")
+```
+
+
+```{r}
+alcaldes_2014_2018=merge(autoridades_2014_pre, autoridades_2018_pre, by="ubicacion_completa", all.y=TRUE)
+```
+
+```{r}
+alcaldes_2018_2022=merge(autoridades_2018_pre, autoridades_2022_pre, by="ubicacion_completa", all.y=TRUE)
+```
+
+
+```{r}
+# Supongamos que ya tienes el data frame 'elecciones_merged' tras el merge.
+
+# Crear la nueva columna 'mismo_partido'
+alcaldes_2014_2018$mismo_partido <- ifelse(alcaldes_2014_2018$org_pol.x == alcaldes_2014_2018$org_pol.y, "SI", "NO")
+
+```
+
+
+```{r}
+alcaldes_2018_2022$mismo_partido <- ifelse(alcaldes_2018_2022$org_pol.x == alcaldes_2018_2022$org_pol.y, "SI", "NO")
+
+```
+
+
+
+```{r}
+table(alcaldes_2018_2022$mismo_partido)
+```
+```{r}
+table(alcaldes_2014_2018$mismo_partido)
+```
+
+```{r}
+alcaldes_2014_2018$mismo_partido2 <- ifelse(alcaldes_2014_2018$org_pol.y == alcaldes_2014_2018$org_pol.x, "SI", "NO")
+table(alcaldes_2014_2018$mismo_partido2)
+
+```
+
+```{r}
+reeleccion_2018=table(alcaldes_2014_2018$mismo_partido)
+reeleccion_2022=table(alcaldes_2018_2022$mismo_partido)
+reeleccion_2018 <- as.data.frame(reeleccion_2018)
+reeleccion_2022 <- as.data.frame(reeleccion_2022)
+colnames(reeleccion_2018) <- c("releecion", "Frecuencia")
+colnames(reeleccion_2022) <- c("releecion", "Frecuencia")
+```
+
+
+```{r}
+library(ggthemes)
+library(ggplot2)
+# Crear el gráfico de barras
+bar_sub1=ggplot(reeleccion_2018, aes(x = releecion, y = Frecuencia, fill = releecion)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  labs(title = "Número de Partidos que se Reeligieron vs No Reeligieron en el 2018", x = "Mismo Partido", y = "Número de Distritos") +
+  theme_minimal() +
+  theme(legend.position = "right") +
+  scale_fill_manual(values = c("SI" = "blue", "NO" = "red"), name = "Reelección")
+bar_sub1+theme_test()
+```
+
+```{r}
+# Crear el gráfico de barras
+bar_sub2=ggplot(reeleccion_2022, aes(x = releecion, y = Frecuencia, fill = releecion)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  labs(title = "Número de Partidos que se Reeligieron vs No Reeligieron en el 2022", x = "Mismo Partido", y = "Número de Distritos") +
+  theme_minimal() +
+  theme(legend.position = "right") +
+  scale_fill_manual(values = c("SI" = "blue", "NO" = "red"), name = "Reelección")
+bar_sub2+theme_test()
+```
+
+```{r}
+saveRDS(bar_sub1, file = "bar_sub1.rds")
+saveRDS(bar_sub2, file = "bar_sub2.rds")
+
+```
+
+
+
+
+
+
+
+

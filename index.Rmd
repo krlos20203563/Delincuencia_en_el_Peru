@@ -1,369 +1,305 @@
 ---
-title: "Mapas de delitos patrimoniales y extorsión"
-author: "Carlos Crespín"
-date: "`r Sys.Date()`"
+title: "Control territorial: ¿Competencia o cooperación? Factores que influyeron en el aumento de la extorsión en el Perú entre 2019 y 2022"
+bibliography: Tesis.bib
+author: Carlos Crespin
+date: "`r format(Sys.Date(), '%d de %B de %Y')`"
 output: 
-  html_document:
-    toc: true
-    toc_float: true
-    collapsed: false
-    number_sections: false
-    toc_depth: 3
-    code_download: true
-    theme: journal
-    highlight: textmate
+  flexdashboard::flex_dashboard:
+    storyboard: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(flexdashboard) # always
 ```
+
+
+## Intro {.sidebar}
+
+Entre las principales fuentes de investigación de este trabajo se encuentran: 
+
+- @feldmann_gobernanza_2022
+- @noauthor_r_nodate
+- @lievano_asociacion_2022
+- @rojas_inseguridad_2016
+- @costa_reforma_2007
+- @yupari-azabache_factores_2020
+- @magallanes_data_2022
+- @dulin_community_2023
+- @mininter_denuncias_2024
+- @felipe_extorsion_2024
+
+### Presentación
 
 ```{r}
-library(dplyr)
-library(magrittr)
-library(rio)
-library(sp)
-library(ggplot2)
-library(rgdal)
-library(ggplot2)
-library(sf)
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/caratula.png") 
 ```
 
-En este trabajo de investigación se analiza, de manera preliminar, los delitos 
-patrimoniales. En específico, se analizarán los delitos patrimoniales en el Perú
-y su desarrollo. Por el momento, se está trabajando con información obtenida por
-el Sistema de Control y Registro de Denuncias Policiales (SIDPOL). En ese sentido,
-la información obtenida de dicha base de datos corresponde a denuncias policiales,
-no a encuestas de victimización. Se trabajará acerca de ello más adelante.
-
-Para poder conocer, de manera superficial, en qué zonas del Perú hay mayor inci-
-dencia de delitos patrimoniales y, especialmente, de extorsión, se realizará un
-análisis de la información recabada. Se tiene presente la existencia de un sub-
-registro de denuncias que no necesariamente se condice con los hechos delictivos
-en total que acontecen en el Perú. No obstante, esta información indica, en cier-
-ta medida, qué tanto puede confiar la población en la Policía Nacional del Perú 
-como insitución y, por otro lado, la eficiencia de la misma.
-
-La información se obtuvo del [Observatorio Nacional de Seguridad Ciudadana](https://observatorio.mininter.gob.pe/content/base-de-datos).
-Dicho observatorio contiene información proveniente de SIDPOL y otros portales 
-de registro de la Policía. También contiene información de ENAPRES y de SIUP. 
-Con dichas bases de datos también se trabajará puesto que ENAPRES tiene un apar-
-tado de victimización en su encuesta. En ese sentido, toma la forma de un cues-
-tionario sobre victimización. Por otro lado, el Sistema de Unidades Policiales 
-contiene información acerca del número de efectivos policiales y dependencias de
-esta institución a nivel nacional. 
-
-Para este análisis inicial, se dividirá en dos apartados. El primero corresponde 
-a un análisis provincial acerca de los delitos patrimoniales en general. En este
-se explorará la información referente a los tipos de delitos cometidos en el Perú
-y se desagregará tanto los tipos de delitos y la distribución de los mismos, así como la localización mayoritaria de los tipos de delitos.
-
-En segundo lugar, se analizarán las denuncias por extorsión a nivel departamental y como se ha dispersado a nivel departamental. En ambos casos se trabaja con la data disponible del Observatorio.
-
-# Información acerca de los tipos de delitos a nivel nacional 
+### Introducción
 
 ```{r}
-delitos=import("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/SIDPOL/SIDPOL_2018-2024.xlsx")
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/introduccion.png")
 ```
 
-Ahora bien, se procederá a realizar un análisis exploratorio acerca de la infor-
-mación que nos otorga la base de datos en materia de información por denuncias.
+*** 
+  
+En este apartado se utilizó las siguientes fuentes:
+
+- @datacrim_panel_2023
+- @iep_iep-op-junio-2023-informe-completopdf_2023
+- @mininter_denuncias_2024
+
+### Comparación del promedio de denuncias según tipo de delitos elaborado con la data abierta del Observatorio Nacional de Seguridad Ciudadana
 
 ```{r}
-names(delitos)
+readRDS("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/graficos/graf1.rds")
 ```
 
-Se puede apreciar las variables. Se les cambiará el nombre para mayores facili-
-dades. Asimismo, se preprocesará la data puesto que se desea analizar los tipos
-de delitos y la información correspondiente a estos.
+***
+
+Se puede apreciar una diferencia sumamente significativa en la media de delitos patrimoniales respecto de los otros tipos de delitos
+
+### Tema y pregunta de investigación
 
 ```{r}
-names(delitos)=c("year","mes","departamento","provincia","distrito","ubigeo","tipos","denuncias","distrito_emergencia")
+readRDS("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/graficos/graf4.rds")
 ```
 
-Ahora, como se desea analizarlos tipos. veamos numéricamente qué tan distintos
-son las cantidades en los tipos de delitos.
+***
+
+Tema: El aumento de los casos de extorsión en el Perú
+
+Pregunta: ¿Qué factores estatales influyeron en el aumento de las denuncias por extorsión en el Perú entre 2018 al 2023?
+
+Hubo un aumento tres veces mayor en las denuncias por casos de extorsión a nivel nacional
+
+### Revisión de Literatura
 
 ```{r}
-table(delitos$tipos)
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/literature_review.png") 
 ```
-No obstante, la información presentada solo es el recuento de cuántas veces se 
-repiten esos tipos de delitos a lo largo de la base. No obstante, lo que se dese-
-a obtener es información que permita comparar dichos delitos. Para ello, realiza-
-remos distintas pruebas gráficas.
+
+***
+
+- @feldmann_gobernanza_2022
+- @gonzales_silva_optimizacion_2017
+- @rotta_origenes_2017
+- @ferreira_prediciendo_2022
+- @lievano_asociacion_2022
+- @rojas_inseguridad_2016
+- @campoy-torrente_evaluacion_2016
+- @zarate_inseguridad_2013
+- @dargent_estado_2012
+- @costa_reforma_2007
+- @costa_respuestas_2010
+- @dammert_violencia_2000
+- @coimbra_crimen_2019
+- @gabaldon_territorialidad_nodate
+- @yupari-azabache_factores_2020
+- @snyder_drugs_2009
+- @juan_pablo_luna_perspectivas_2015
+- @dammert_crimen_nodate
+- @dammert_corruption_2019
+- @andrade_pandillas_2015
+- @ginocchio_legalized_2022
+- @dulin_community_2023
+- @dammert_corrupcion_2017
+- @moncada_resisting_2022
+- @trejo_why_2018
+- @feldmann_criminal_2023
+- @tilly_guerra_2007
+- @mann_sources_1993
+- @mazzuca_middle-quality_2020
+- @odonnell_acerca_1993
+- @lessing_conceptualizing_2021
+- @arias_crime_2017
+- @camacho_arango_relaciones_2016
+- @fruhling_violencia_2009
+- @basombrio_delito_2007
+
+### Gobernanza criminal y la crisis de los Estados Latinoamericanos Contemporáneos
 
 ```{r}
-library(lsr)
-IC_tipo = delitos |>
-  group_by(tipos) |>
-  summarise(media = mean(denuncias, na.rm=T),
-            liminf = ciMean(denuncias, na.rm=T)[1],
-            limsup = ciMean(denuncias, na.rm=T)[2]
-            )
-
-
-graf1 = ggplot(IC_tipo, aes(x=tipos, y=media))+
-  geom_bar(stat="identity")+
-  geom_errorbar(aes(ymin=liminf, ymax=limsup), width=0.2)+
-  geom_text(aes(label=paste(round(media, 1))), vjust=-1, size=3)+
-  xlab("Tipo de delitos") + ylab("Número de denuncias")+
-  ylim(0, 80) +
-  ggtitle("Promedio del tipo de denuncias") +  
-  theme_light() +      
-  theme(axis.text.x = element_text(size = 7.5)) 
-graf1
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/gobernanza_criminal_Feldmann.png") 
 ```
 
-Se puede observar que el tipo de delito con un mayor promedio son los de tipo 
-patrimonial. En esta categoría se encuentran los delitos por hurto, robo, estafa,
-y extorsión. No obstante, no podemos quedarnos solo con esta información, pues 
-es necesario conocer la distribución numérica de estos delitos para poder reali-
-zar mayores precisiones.
+***
+
+- @snyder_drugs_2009
+- @lessing_conceptualizing_2021
+- @feldmann_gobernanza_2022
+- @trejo_votos_2022
+- @odonnell_acerca_1993
+- @tilly_guerra_2007
+- @mann_sources_1993
+- @mazzuca_middle-quality_2020
+- @arias_crime_2017
+- @moncada_resisting_2019
+- @trejo_why_2018
+
+### Marco Teórico: Gobernanza Criminal
 
 ```{r}
-ggplot(delitos, aes(x = tipos, y = denuncias)) +
-  geom_boxplot() + coord_flip() + 
-  theme_light() +
-  labs(x = "Tipos de delitos", y = "Número de denuncias") +
-  ggtitle("Distribución de denuncias por tipo de delito")
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/Marco_teorico_Gobernanza_criminal.png") 
 ```
 
-Se puede apreciar que, si bien es cierto que a nivel visual no hay diferencias 
-significativas en las muestras, se puede observar que, en el caso de los delitos
-patrimoniales, hay una mayor cantidad de valores atípicos y que se extienden en
-gran medida a lo largo del gráfico. Cabe recalcar que esta data contiene informa-
-ción de los años 2018 al 2024. 
+***
 
-Entonces, se puede concluir que el número de denuncias por delitos patrimoniales
-es mucho mayor que el resto. Además, la distribución de estos datos es atípica 
-y se expande más allá del rango intercuartílico. 
+Gráfico de elaboración propia sobre la base de la siguiente literatura:
+- @feldmann_gobernanza_2022
+- @moncada_resisting_2022
+- @moncada_cities_2016
+- @moncada_urban_2016
+- @moncada_resisting_2019
+- @feldmann_criminal_2023
+- @barnes_criminal_2017
+- @trejo_why_2018
+- @trejo_votos_2022
+- @kleemans_theoretical_2014
+- @ginocchio_legalized_2022
+- @dulin_community_2023
+- @dammert_corrupcion_2017
+- @estevez-soto_are_2021
+- @urrutia_tensiones_2021
+- @dammert_corruption_2019-1
+- @lessing_conceptualizing_2021
+- @duran-martinez_politics_2020
+- @dammert_prevencion_2005
+- @snyder_drugs_2009
 
-Este elevado número de denuncias por delitos patrimoniales permite establecer una
-clara importancia en el estudio de estos temas para el análisis en materia de
-seguridad ciudadana. Este registro evidencia que la importancia de dichos delitos
-incluso si se toma en consideración la existencia de datos subregistrados a causa
-de la desconfianza en la policía.
-
-
-# Los delitos patrimoniales a nivel nacional y su desagregación a nivel provincial
-
-Ahora bien, tras resaltar la importancia de los delitos patrimoniales puesto que 
-son los que más perjudican a la población al punto de ser altamente denunciados, 
-se analizará el cómo estos delitos patrimoniales se distribuyen en las diferentes
-provincias del Perú. 
-Puesto que la data ya se procesó de modo que la unidad de análisis sean dichas 
-unidades territoriales, se descargará la data. Este pre-procesamiento se realizó
-en el archivo "cleandata.rmd".
+### Hipótesis
 
 ```{r}
-patrimoniales=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/SIDPOL/SIDPOL_provincias_patrimoniales/patrimoniales.csv") #data de todos los delitos patrimoniales por distrito desde 2018 hasta 2024
-provincias_totales=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/SIDPOL/SIDPOL_provincias_patrimoniales/provincias_totales.csv")#contiene información de las provincias y las denuncias por delitos patrimoniales a nivel histórico pero con 195 observaciones
-provincias_allyears=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/SIDPOL/SIDPOL_provincias_patrimoniales/provincias_allyears.csv")#información del total de denuncias por delitos patrimoniales a nivel histórico pero sin contar con Lima y otra provincia
-panel_provincias=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/SIDPOL/SIDPOL_provincias_patrimoniales/panel_provincias.csv")#este es un panel de datos que contiene información acerca de delitos patrimoniales por provincias desde 2018 hasta 2024
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/hipótesis.png")
 ```
 
- Primero analizaremos la distribución total de los datos en el gráfico total.
- 
-```{r}
-library(ggplot2)
-(statVals=summary(patrimoniales$denuncias))
-statVals['std']=sd(patrimoniales$denuncias,na.rm = T)
-(statVals=ceiling(statVals))
-IQR=statVals['3rd Qu.']-statVals['1st Qu.']
-statVals['upper']=1.5*IQR + statVals['3rd Qu.']
-statVals['lower']=statVals['1st Qu.']-1.5*IQR
-theStart=statVals['Min.']
-width=10
-oldMax=statVals['Max.']
-newMax=ifelse(oldMax%%width<width,
-              oldMax+(width-oldMax%%width),oldMax)
-TheBreaks=seq(theStart,newMax,width)
-intervals=cut(patrimoniales$denuncias,
-              breaks=TheBreaks,include.lowest = T)
-topCount=max(table(intervals))
-widthY=50
-top_Y=ifelse(topCount%%widthY<widthY,
-             topCount+widthY-topCount%%widthY,topCount)
-vertiVals=seq(0,top_Y,widthY)
+***
 
+A grandes rasgos, sobre la base de la literatura existente, esas serían las 4 
+principales hipótesis a corroborar en el presente trabajo de investigación. No 
+obstante, debido a la naturaleza tanto cuantitativa como cualitativa, la presen-
+te investigación cuenta con hipótesis que combinan las variables antes menciona-
+das. Asimismo, dentro de esas hipótesis principales, se maneja subhipótesis, 
+especialmente en el caso de la capacidad estatal puesto que abarca distintas 
+dimensiones.
+Las fuentes principales para la elaboración de las hipótesis fueron las siguientes:
+- @moncada_resisting_2019
+- @moncada_resisting_2022
+- @basombrio_delito_2007
+- @dammert_corruption_2019
+- @dammert_prevencion_2005
+- @costa_reforma_2007
+- @urrutia_tensiones_2021
+- @fruhling_violencia_2009
+- @trejo_votos_2022
+- @trejo_why_2018
+- @juan_pablo_luna_perspectivas_2015
+- @snyder_drugs_2009
+- @feldmann_gobernanza_2022
 
-histdenun= ggplot(patrimoniales, aes(x = denuncias)) +
-  theme_classic() +
-  ylab("Número de denuncias")
- disp3= histdenun + geom_histogram(binwidth = width,
-                                   boundary=theStart,
-                                   fill='white',color='grey60')
- # the normal curve
-disp3= disp3 + stat_function(fun = "NormalHist",
-                             color = "black", linewidth = 1,linetype='dashed')
- # the vertical axis values
-disp3= disp3 + scale_y_continuous(breaks = vertiVals)
-disp3
-```
- 
-Se puede apreciar que la mayoría de distritos concentra un número reducido de 
-denuncias por delitos patrimoniales.Ahora bien, visualizaremos, a través de la 
-georreferencia, en qué provincias, desde 2018 hasta 2024, hubo más delitos 
-patrimoniales
-
-
-
-## Mapas de delitos patrimoniales a nivel nacional por provincias
-
-Ahora bien, se realizará dichos mapas para identificar las provincias con mayor
-cantidad de denuncias por delitos patrimoniales.
+### Metodología
 
 ```{r}
-mapPROV_total=read_sf("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/provincias/provincias_totales.gpkg",layer="provincias")
-mapPROV=sf::read_sf("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/provincias/PROVINCIAS.shp")
-ggplot(mapPROV)+geom_sf()
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/metodo_mixto.png")
 ```
 
+***
 
+Para el apartado metodológico se utilizó lo planteado por los siguientes autores:
+- @trejo_votos_2022
+- @munoz_politica_2008
+- @pattnaik_spatial_2020
+- @urrutia_tensiones_2021
+- @hsiao_why_2005
+- @hilbe_statistical_2017
+- @lievano_asociacion_2022
+- @gonzales_silva_optimizacion_2017
 
-Puesto que la data se procesó en el archivo jupyter, se importará la data creada
-```{r}
-library(viridis)
-#debido a que en python el método que mejores resultados otorgó fue el de JenksCaspall, se utilizará esa información
-# Crea el gráfico
-ggplot(data = mapPROV_total) +
-  theme_light() +
-  geom_sf(aes(fill = Total_jc5_cat), color = NA) +
-  scale_fill_viridis_c(option = "D", direction = -1)
-
-```
-Este primer coropleto muestra la información que se obtuvo del modelo del JenksCaspall.
-Ahora bien, se realizará un mapa de calor que muestre de otro modo la informacion.
-En el primer coropleto se usa dicho algoritmo mientras que en el segundo a realizar
-se utiliza la información de las denuncias.
-
+### Hallazgos preliminares 1: Coropleta simple de extorsiones en el Perú
 
 ```{r}
-# Crear el gráfico de mapa de calor
-grafico <- ggplot(mapPROV_total) +
-  geom_sf(aes(fill = total_denuncias)) +
-  scale_fill_gradient(low = "white", high = "darkred")  # Invertir la escala de colores
-
-# Mostrar el gráfico
-print(grafico)
+readRDS("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/mapas/map1.rds")
 ```
 
-Se puede apreciar una gran diferencia entre ambos mapas puesto que, en el primero,
-se muestra en tonos azules más oscuros la información acerca de la data. En cambio,
-en el segundo, la escala de colores aumenta cuando se superan las noventa mil denuncias.
+***
 
-En otras palabras, el primer mapa resalta muchas provincias más que el segundo.
-Para el segundo, solamente resalta Chiclayo en materia de delitos patrimoniales.
-En cambio, en el primero, se resalta Chiclayo, Trujillo, Callao y Arequipa, no 
-necesariamente en ese orden.
+En esta coropleta simple se clasificó a las provincias en cinco categorías según
+el criterio JenkerCall. No obstante, esta clasificación resulta insuficiente de-
+bido a que Lima se presenta como un outlier considerable que altera la muestra y
+la clasificación.
+Asimismo, se puede identificar que las zonas más afectadas son, en su mayoría, 
+muy urbanizadas. 
+Este gráfico es de elaboración propia con los datos de @mininter_denuncias_2024 
+y utilizando el método propuesto por @magallanes_data_2022.
 
-Una precisión a realizar es que la provincia de Putumayo no se encontraba en la
-data de delitos patrimoniales ni de extorsión, por tanto, no se puede visualizar
-la información. El espacio en blanco grande en el departamento de Loreto corresponde
-a Putumayo.
-
-
-# Los delitos por extorsión en el Perú a nivel departamental
-
-Ahora bien, se realizará un mapa a nivel departamental con los denuncias por
-delitos de extorsión en el Perú. Más adelante se procesará la información necesa-
-ria para poder obtener información mucho más desagregada a nivel provincial y distrital
-
-
-Este es el mapa que se obtuvo
-```{r}
-library(sp)
-library(ggplot2)
-mapDPT=sf::read_sf("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/departamentos/DEPARTAMENTO.shp")
-ggplot(mapDPT) + geom_sf()
-```
-
-
-Ahora se importará la data obtenida a nivel historico sobre dichos delitos.
+### Hallazgos preliminares 2: Autocorrelación espacial univariada
 
 ```{r}
-extor_total=import("~/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/SIDPOL/SIDPOL_departamentos_extorsion/ext_total.csv")
-#se cambiará de nombre a las columnas para poder realizar el merge
-names(extor_total)=c("DEPARTAMEN","denuncias_extor")
+readRDS("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/mapas/map_MORAN.rds")
 ```
 
+***
 
-Se procederá con el merge correspondiente a este mapa para realizar las pruebas
-```{r}
-geoextor=merge(mapDPT, extor_total)
-```
+En el primer gráfico, se puede observar que los hotoutliers son diez provincias del Perú: Jaén, en Cajamarca; Rioja, en San Martín; Leoncio Prado, en Huánuco; Padre Abad, en Ucayali; Contumaza, en Cajamarca; Trujillo, en La Libertad; Hualgayoc, en Cajamarca; Angares, en Huancavelica y Azángaro, en Puno.
 
-
-Tras haber realizado el merge, se realizará el mapa respectivo
-```{r}
-# Crear el gráfico de mapa de calor
-DPT_extor <- ggplot(geoextor) +
-  geom_sf(aes(fill = denuncias_extor)) +
-  scale_fill_gradient(low = "white", high = "darkred")  # Invertir la escala de colores
-
-# Mostrar el gráfico
-print(DPT_extor)
-```
-
-En este mapa se puede pareciar que Trujillo es el departamento con mayor número 
-de denuncias por extorsión en los últimos años.
-
-
-# Variación de las denuncias por delitos por extorsión por año
+### Hallazgos preliminares 3: Autocorrelación espacial bivariada
 
 ```{r}
-den_mod=import("https://github.com/krlos20203563/Delincuencia_en_el_Peru/raw/main/SIDPOL/SIDPOL_dpt_extorsion.xlsx")
-ext_years=filter(den_mod, PMODALIDADES=="Extorsión")
-ext_years=ext_years%>%
-  group_by(ANIO)%>%
-  summarise(n_extor=sum(n_dist_ID_DGC))
-names(ext_years)=c("years","n_extor")
-ext_years$years=as.numeric(ext_years$years)
+readRDS("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/mapas/mapa_BV.rds")
 ```
 
+***
 
+En ese sentido, las provincias que presentan estas características son: Manu, en Madre de Dios; Paucartambo, en Cusco; Azángaro, en Puno; Tacna, en el departamento homónimo; Abancay, en Apurímac; Angares, en Huancavelica; Aija, Recuay y Bolognesi, en Áncash; Cajamarca, Hualgayoc y Contumaza, en Cajamarca; Trujillo, en La Libertad y, por último, San Martín y Rioja, en el departamento de San Martín.
 
-Ahora se verificará cómo ha variado por año el número de denuncias por delitos
-de extorsión
+Provincias en común: Azángaro, en Puno; Angares, en Huancavelica; Contumaza, en Cajamarca; Trujillo, en La Libertad; Hualgayoc, en Cajamarca; Rioja, en San Martín
+
+### Hallazgos preliminares 4: Tabla de distritos con mayor número de denuncias por extorsión
+
 ```{r}
-ggplot(ext_years, aes(x = years, y = n_extor)) +
-  geom_line() +
-  geom_point() +
-  labs(title = "Denuncias por extorsión del 2018-2024",
-       x = "Año",
-       y = "Total de casos") +
-  theme_minimal()
-
-
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/Tabla de casos con más denuncias.png")
 ```
 
+***
 
+Son los 30 distritos con más casos de extorsión por año a nivel nacional. Este 
+gráfico se elaboró con la base de datos de @mininter_denuncias_2024 georreferenciada.
 
+### Hallazgos preliminares 5: Mapa detallado de denuncias por extorsión a nivel nacional 
 
+```{r}
+readRDS("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/mapas/map10.rds")
+```
 
+***
 
+Este mapa contiene los distritos con mayor número de denuncias por casos de extorsión.
+En este se puede detectar por zonas específicas los casos de extorsión en los distintos
+distritos del pais.
 
+### Hallazgos preliminares 6: Alternancia subnacional a nivel distrital en el Perú en el año 2018
 
+```{r}
+readRDS("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/graficos/bar_sub1.rds")
+```
 
+***
 
+Cabe resaltar que a partir de ese año la reelección de autoridades se decretó como
+prohibida a nivel nacional. No obstante, los movimientos regionales o partidos de 
+esos años, al menos un 10%, se reeligió a nivel nacional. Este gráfico y el siguiente
+fueron elaborados por cuenta propia con la información proporcionada por el JNE
+a través del portal INFOGOB
 
+### Hallazgos preliminares 7: Alternancia subnacional a nivel distrital en el Perú en el año 2022
 
+```{r}
+readRDS("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/graficos/bar_sub2.rds")
+```
 
+### Pendientes
 
+```{r}
+knitr::include_graphics("C:/Users/Carlos Daniel/Documents/Tesis_de_Licenciatura/Delincuencia_en_el_Peru/imagenes/pendientes.png") 
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### References
